@@ -1,0 +1,48 @@
+[
+  {
+    "action": "ACTION_NIL",
+    "children": null,
+    "height": 1,
+    "name": "state0",
+    "parent": null,
+    "stateMap": [
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "empty",
+        "empty",
+        "goal",
+        "wall"
+      ],
+      [
+        "wall",
+        "empty",
+        "empty",
+        "key",
+        "wall"
+      ],
+      [
+        "wall",
+        "empty",
+        "empty",
+        "avatar",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ]
+    ],
+    "isSelected": false
+  }
+]
+

@@ -1,0 +1,272 @@
+[{
+  "action": "ACTION_NIL",
+  "children": [
+    {
+      "action": "ACTION_USE",
+      "children": null,
+      "height": 2,
+      "name": "state1",
+      "parent": "state0",
+      "stateMap": [
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "goal",
+          "goal",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "withkey",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "empty",
+          "wall"
+        ],
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ]
+      ],
+      "isSelected": false
+    },
+    {
+      "action": "ACTION_LEFT",
+      "children": null,
+      "height": 2,
+      "name": "state2",
+      "parent": "state0",
+      "stateMap": [
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "withkey",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "empty",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "empty",
+          "wall"
+        ],
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ]
+      ],
+      "isSelected": true
+    },
+    {
+      "action": "ACTION_RIGHT",
+      "children": null,
+      "height": 2,
+      "name": "state3",
+      "parent": "state0",
+      "stateMap": [
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "goal",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "withkey",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "empty",
+          "wall"
+        ],
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ]
+      ],
+      "isSelected": true
+    },
+    {
+      "action": "ACTION_DOWN",
+      "children": null,
+      "height": 2,
+      "name": "state4",
+      "parent": "state0",
+      "stateMap": [
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "goal",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "withkey",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "empty",
+          "wall"
+        ],
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ]
+      ],
+      "isSelected": true
+    },
+    {
+      "action": "ACTION_UP",
+      "children": null,
+      "height": 2,
+      "name": "state5",
+      "parent": "state0",
+      "stateMap": [
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "goal",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "withkey",
+          "wall"
+        ],
+        [
+          "wall",
+          "empty",
+          "empty",
+          "empty",
+          "wall"
+        ],
+        [
+          "wall",
+          "wall",
+          "wall",
+          "wall",
+          "wall"
+        ]
+      ],
+      "isSelected": true
+    }
+  ],
+  "height": 1,
+  "name": "state0",
+  "parent": null,
+  "stateMap": [
+    [
+      "wall",
+      "wall",
+      "wall",
+      "wall",
+      "wall"
+    ],
+    [
+      "wall",
+      "empty",
+      "empty",
+      "goal",
+      "wall"
+    ],
+    [
+      "wall",
+      "empty",
+      "empty",
+      "withkey",
+      "wall"
+    ],
+    [
+      "wall",
+      "empty",
+      "empty",
+      "empty",
+      "wall"
+    ],
+    [
+      "wall",
+      "wall",
+      "wall",
+      "wall",
+      "wall"
+    ]
+  ],
+  "isSelected": true
+}]

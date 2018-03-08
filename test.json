@@ -1,0 +1,32 @@
+
+[
+
+  {
+    "parent": null,
+    "gameName": "zelda",
+    "children":[
+
+    ],
+    "name":"state0",
+    "stateMap":  [
+      ["wall","wall","wall","wall","wall"],
+      ["wall","goal","empty","empty","wall"],
+      ["wall","empty","empty","empty","wall"],
+      ["wall","key","empty","nokey","wall"],
+      ["wall","wall","wall","wall","wall"]
+    ],
+    "levelMap": [
+      "wwwww",
+      "w  Gw",
+      "w %2w",
+      "w™€‰w",
+      "wwwww"
+    ],
+    "isSelected": true
+  }
+
+
+
+
+]
+

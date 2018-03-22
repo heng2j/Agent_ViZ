@@ -103,6 +103,7 @@ router.route('/constructLevelMap')
 		fs.unlink('/Users/zhonghengli/Documents/NYU Grad/Ai Gaming Research/GitHub/CICERO-An-AI-Game-Design-Assisted-Tool/examples/gridphysics/' + gameName +'_lvl_fromAgentViz.txt', function(error) {
 	    if (error) {
 	        throw error;
+	        res.end('The previous level file is deleted!');
 	    }
 	    console.log('Deleted ' + gameName +'_lvl_fromAgentViz.txt');
 		});

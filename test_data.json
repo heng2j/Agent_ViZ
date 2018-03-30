@@ -1,0 +1,58 @@
+[
+  {
+    "height": 3,
+    "TreeNodeFileName": "test97.269.json",
+    "elapsedTime": 97.269,
+    "numNodesVisited": 132,
+    "Persona": "Killers"
+  },
+  {
+    "height": 3,
+    "TreeNodeFileName": "test93.824.json",
+    "elapsedTime": 93.824,
+    "numNodesVisited": 120,
+    "Persona": "Archievers"
+  },
+  {
+    "height": 3,
+    "TreeNodeFileName": "test90.505.json",
+    "elapsedTime": 90.505,
+    "numNodesVisited": 133,
+    "Persona": "Explorers"
+  },
+  {
+    "height": 3,
+    "TreeNodeFileName": "test90.407.json",
+    "elapsedTime": 90.407,
+    "numNodesVisited": 176,
+    "Persona": "Explorers"
+  },
+  {
+    "height": 3,
+    "TreeNodeFileName": "test91.301.json",
+    "elapsedTime": 91.301,
+    "numNodesVisited": 182,
+    "Persona": "Explorers"
+  },
+  {
+    "height": 3,
+    "TreeNodeFileName": "test76.488.json",
+    "elapsedTime": 76.488,
+    "numNodesVisited": 155,
+    "Persona": "Explorers"
+  },
+  {
+    "height": 2,
+    "TreeNodeFileName": "test13.412.json",
+    "elapsedTime": 13.412,
+    "numNodesVisited": 30,
+    "Persona": "Archievers"
+  },
+  {
+    "height": 1,
+    "TreeNodeFileName": "test3.113.json",
+    "elapsedTime": 3.113,
+    "numNodesVisited": 5,
+    "Persona": "Archievers"
+  }
+]

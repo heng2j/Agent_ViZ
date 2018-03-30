@@ -78,8 +78,6 @@
 
 
 
-
-
     const currentJsonFile = "data.json";
 
     // d3.json block
@@ -137,7 +135,7 @@
                 .style("fill-opacity", 1e-6);
 
 
-
+            // Change to Circles
             var thisGrid = nodeEnter
                 .append("svg")
                 .attr("class", "grid_svg")
@@ -182,7 +180,13 @@
             var row = thisGrid.selectAll(".row")
                 .data(function(d) {
 
-                    currentGridData = getGridData(d.stateMap);
+                    var rowNum = d.stateMap.length;
+                    var colNum = d.stateMap[0].length;
+
+//                    console.log("rowNum :", rowNum);
+//                    console.log("colNum :", colNum);
+
+                    currentGridData = getGridData(d.stateMap, rowNum ,colNum);
 
                     return currentGridData; })
                 .enter().append("g")

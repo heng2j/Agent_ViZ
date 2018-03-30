@@ -1,6 +1,6 @@
 
-const rowNum = 5;
-const colNum = 5;
+var rowNum = 5;
+var colNum = 5;
 
 
 var stateMap =
@@ -15,13 +15,16 @@ var stateMap =
 
 
 
-function getGridData(stateMap) {
+function getGridData(stateMap, newRowNum, newColNum) {
     var data = new Array();
     var xpos = 1; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
     var ypos = 1;
     var width = 50;
     var height = 50;
     var click = 0;
+
+    rowNum = newRowNum;
+    colNum = newColNum;
 
     // iterate for rows
     for (var row = 0; row < rowNum; row++) {

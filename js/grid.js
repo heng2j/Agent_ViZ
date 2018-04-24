@@ -1,6 +1,6 @@
-
-var rowNum = 5;
-var colNum = 5;
+//
+// var rowNum = 5;
+// var colNum = 5;
 
 
 var stateMap =
@@ -25,6 +25,10 @@ function getGridData(stateMap, newRowNum, newColNum) {
 
     rowNum = newRowNum;
     colNum = newColNum;
+
+    // console.log("rowNum :", rowNum);
+    // console.log("colNum :", colNum);
+
 
     // iterate for rows
     for (var row = 0; row < rowNum; row++) {
@@ -54,8 +58,7 @@ function getGridData(stateMap, newRowNum, newColNum) {
 }
 
 var gridData = getGridData(stateMap);
-// I like to log the data to the console for quick debugging
-// console.log(gridData);
+
 
 
 
@@ -72,21 +75,21 @@ var grid = d3.select("#grid")
     .attr("class", "grid_svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
     .attr("viewBox", "0 0 300 300")
-    .attr("height", 25)
-    .attr("width", 25)
+    .attr("height", rowNum * 5)
+    .attr("width", colNum * 5)
     .on( 'mouseenter', function() {
         // select element in current context
         d3.select( this )
             .transition()
-            .attr("height", 150)
-            .attr("width", 150);
+            .attr("height", (rowNum * 5) * 10)
+            .attr("width", (colNum * 5)* 10);
     })
     // set back
     .on( 'mouseleave', function() {
         d3.select( this )
             .transition()
-            .attr("height", 25)
-            .attr("width", 25);
+            .attr("height", rowNum * 5)
+            .attr("width", colNum * 5);
     });
 
 var row = grid.selectAll(".row")
@@ -124,7 +127,7 @@ defs.append("svg:pattern")
     .attr("patternUnits", "userSpaceOnUse");
 
 cell.append("svg:image")
-    .attr("xlink:href",  function(d) { return  'images/sprites/' + d.imgStr + '.png'; } )
+    .attr("xlink:href",  function(d) { return  'http://localhost:8080/images/sprites/' + d.imgStr + '.png'; } )
     .attr("width", config.avatar_size)
     .attr("height", config.avatar_size)
     .attr("x", function(d) { return d.x; })

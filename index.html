@@ -251,13 +251,23 @@
         .attr('class', 'svg_graph_d3-tip')
         .offset([-10, 0])
         .html(function(d) {
+
+
+
+
+
+
             return "<strong>Action Taken: </strong> <span style='color:red'>" + d.data.action + "</span>" + "<br>" + "<br>" +
 
                 "<strong>Name: </strong> <span style='color:red'>" + d.data.name + "</span>" + "<br>" + "<br>" +
                 "<strong>isSelected: </strong> <span style='color:red'>" + d.data.isSelected + "</span>" + "<br>" + "<br>" +
                 "<strong>isFinalPath: </strong> <span style='color:red'>" + d.data.isFinalPath + "</span>" + "<br>" + "<br>" +
 
+
+                "<strong>Parent: </strong> <span style='color:red'>" + d.data.parent + "</span>" + "<br>" +
+
                 "<strong>Percentage of Winning: </strong> <span style='color:red'>" + ((((initialHeuristicScore - d.data.score) / initialHeuristicScore) +  d.data.rewards) * 100).toFixed(2) + "% "+ "</span>" + "<br>" + "<br>" +
+
 
 
 
@@ -280,8 +290,7 @@
 // load the external data
         d3.json(currentJson, function(error, treeData) {
 
-            console.log(treeData);
-
+            console.log("treeData", treeData);
 
 
             finalMaxTotalValue = treeData[0].finalMaxTotalValue;
@@ -495,7 +504,7 @@
                     .data(function(d) {
 
 
-                        console.log("d :", d);
+//                        console.log("d :", d);
 
 
                         var rowNum = d.data.stateMap.length;
@@ -704,6 +713,30 @@
                 function click(d) {
 
 
+
+                    var currentNode = d;
+
+                    var path = currentNode.data.name;
+
+                    var symbol = '>';
+
+                    while (currentNode.parent != null){
+
+
+                        path =   symbol + path;
+                        var parentName = currentNode.parent.data.name;
+                        path =  parentName + path;
+
+
+                        currentNode = currentNode.parent;
+
+                    }
+
+
+                    console.log("path", path);
+
+
+
                     currentJsonFile = "jsonFiles/data3.json";
 
 
@@ -726,9 +759,9 @@
 
 
 
-                        d3.selectAll(".svg_treeGraph").remove();
-
-                        treeDraw(currentJsonFile);
+//                        d3.selectAll(".svg_treeGraph").remove();
+//
+//                        treeDraw(currentJsonFile);
 
 //
 //

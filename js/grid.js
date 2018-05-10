@@ -64,87 +64,84 @@ var gridData = getGridData(stateMap);
 
 var config = {
     "avatar_size" : 50
+};
+
+
+
+
+
+// Get the string representation of a DOM node (removes the node)
+function domNodeToString(domNode) {
+    var element = document.createElement("div");
+    element.appendChild(domNode);
+    return element.innerHTML;
 }
 
 
-
-
-
-var grid = d3.select("#grid")
-    .append("svg")
-    .attr("class", "grid_svg")
-    .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", "0 0 300 300")
-    .attr("height", rowNum * 5)
-    .attr("width", colNum * 5)
-    .on( 'mouseenter', function() {
-        // select element in current context
-        d3.select( this )
-            .transition()
-            .attr("height", (rowNum * 5) * 10)
-            .attr("width", (colNum * 5)* 10);
-    })
-    // set back
-    .on( 'mouseleave', function() {
-        d3.select( this )
-            .transition()
-            .attr("height", rowNum * 5)
-            .attr("width", colNum * 5);
-    });
-
-var row = grid.selectAll(".row")
-    .data(gridData)
-    .enter().append("g")
-    .attr("class", "row");
-
-
-var cell = row.selectAll(".cell")
-    .data(function(d) { return d; })
-    .enter().append("svg:g")
-    .attr("class", "cell");
-
-
-
-var column = cell.append("rect")
-    .attr("class","square")
-    .attr("x", function(d) { return d.x; })
-    .attr("y", function(d) { return d.y; })
-    .attr("width", function(d) { return d.width; })
-    .attr("height", function(d) { return d.height; })
-    .style("fill",  function(d) { return   "url(#grump_avatar" + d.id + ")" ; })
-    .style("stroke", "#222")
-    .text(function(d) { return d.imgStr; });
-
-
-var   defs = cell.append('svg:defs');
-
-
-
-defs.append("svg:pattern")
-    .attr("id",  function(d) { return   "grump_avatar" + d.id ; })
-    .attr("width", config.avatar_size)
-    .attr("height", config.avatar_size)
-    .attr("patternUnits", "userSpaceOnUse");
-
-cell.append("svg:image")
-    .attr("xlink:href",  function(d) { return  'http://localhost:8080/images/sprites/' + d.imgStr + '.png'; } )
-    .attr("width", config.avatar_size)
-    .attr("height", config.avatar_size)
-    .attr("x", function(d) { return d.x; })
-    .attr("y", function(d) { return d.y; });
-
-
-
-    // .on('click', function(d) {
-    //     d.click ++;
-    //     if ((d.click)%4 == 0 ) { d3.select(this).style("fill","#fff"); }
-    //     if ((d.click)%4 == 1 ) { d3.select(this).style("fill","#2C93E8"); }
-    //     if ((d.click)%4 == 2 ) { d3.select(this).style("fill","#F56C4E"); }
-    //     if ((d.click)%4 == 3 ) { d3.select(this).style("fill","#838690"); }
-    // })
-    ;
-
-// var cell = column.append("svg:image")
-//     .attr("xlink:href", 'http://placekitten.com/g/48/48')
 //
-// ;
+//
+//
+// var grid = d3.select("#grid")
+//     .append("svg")
+//     .attr("class", "grid_svg")
+//     .attr("preserveAspectRatio", "xMinYMin meet")
+//     .attr("viewBox", "0 0 300 300")
+//     .attr("height", rowNum * 5)
+//     .attr("width", colNum * 5)
+//     .on( 'mouseenter', function() {
+//         // select element in current context
+//         d3.select( this )
+//             .transition()
+//             .attr("height", (rowNum * 5) * 10)
+//             .attr("width", (colNum * 5)* 10);
+//     })
+//     // set back
+//     .on( 'mouseleave', function() {
+//         d3.select( this )
+//             .transition()
+//             .attr("height", rowNum * 5)
+//             .attr("width", colNum * 5);
+//     });
+//
+// var row = grid.selectAll(".row")
+//     .data(gridData)
+//     .enter().append("g")
+//     .attr("class", "row");
+//
+//
+// var cell = row.selectAll(".cell")
+//     .data(function(d) { return d; })
+//     .enter().append("svg:g")
+//     .attr("class", "cell");
+//
+//
+//
+// var column = cell.append("rect")
+//     .attr("class","square")
+//     .attr("x", function(d) { return d.x; })
+//     .attr("y", function(d) { return d.y; })
+//     .attr("width", function(d) { return d.width; })
+//     .attr("height", function(d) { return d.height; })
+//     .style("fill",  function(d) { return   "url(#grump_avatar" + d.id + ")" ; })
+//     .style("stroke", "#222")
+//     .text(function(d) { return d.imgStr; });
+//
+//
+// var   defs = cell.append('svg:defs');
+//
+//
+//
+// defs.append("svg:pattern")
+//     .attr("id",  function(d) { return   "grump_avatar" + d.id ; })
+//     .attr("width", config.avatar_size)
+//     .attr("height", config.avatar_size)
+//     .attr("patternUnits", "userSpaceOnUse");
+//
+// cell.append("svg:image")
+//     .attr("xlink:href",  function(d) { return  'http://localhost:8080/images/sprites/' + d.imgStr + '.png'; } )
+//     .attr("width", config.avatar_size)
+//     .attr("height", config.avatar_size)
+//     .attr("x", function(d) { return d.x; })
+//     .attr("y", function(d) { return d.y; });
+//
+

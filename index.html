@@ -238,11 +238,17 @@
 
 
 
+        //Need to be uncomment
+//    var currentJsonFile = "jsonFiles/data1.json";
 
-    var currentJsonFile = "jsonFiles/data1.json";
+    //Needed to be replaced
+    var currentJsonFile = "data.json";
+
 
     var finalMaxTotalValue = 0;
     var initialHeuristicScore = 0;
+
+
 
     // Set up the ToolTips
 
@@ -292,6 +298,8 @@
 
             console.log("treeData", treeData);
 
+
+            console.log("treeData[0].rootNodeJSonFile:" , treeData[0].rootNodeJSonFile);
 
             finalMaxTotalValue = treeData[0].finalMaxTotalValue;
 

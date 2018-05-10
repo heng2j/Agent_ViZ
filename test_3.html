@@ -214,6 +214,8 @@
     // again scaleOrdinal
     var color = d3.scaleOrdinal(d3.schemeCategory20);
 
+    var colorSet = ["#3EF2F2", "#7B5DFF", "#FF594A", "#FFDC31", "#61FF6A" ];
+
 
     // Set up the ToolTips
 
@@ -248,6 +250,9 @@
             d.height = +d.height; // radius
 //            d.TreeNodeFileName = d.TreeNodeFileName;
         });
+
+
+
 
         xScale.domain(d3.extent(data, function(d){
             return d.elapsedTime;
@@ -381,7 +386,7 @@
 
     // Set the dimensions and margins of the diagram
     var margin = {top: 20, right: 90, bottom: 30, left: 90},
-        treeGraph_width = 3000 - margin.left - margin.right,
+        treeGraph_width = 4000 - margin.left - margin.right,
         treeGraph_height = 2200 - margin.top - margin.bottom;
 
     var colorScale = d3.scaleLinear()
@@ -393,16 +398,29 @@
 
 
     var currentJsonFile = "data.json";
+    var currentJsonFileName = "";
 
     var finalMaxTotalValue = 0;
     var initialHeuristicScore = 0;
 
+
+    var clusteringDataSet = [];
+    var clusterDict = {};
 
     //Set up Default Grid Size
     var rowNum = 5;
     var colNum = 5;
 
     var rowColRatio = 1;
+
+
+    var means = [];
+    var assignments = [];
+    var dataRange;
+    var drawDelay = 2000;
+
+    var dataExtremes;
+
 
     // Set up the ToolTips
     var graph_tool_tip = d3.tip()
@@ -411,11 +429,20 @@
         .html(function(d) {
             return "<strong>Action Taken: </strong> <span style='color:red'>" + d.data.action + "</span>" + "<br>" + "<br>" +
                 "<strong>Percentage of Winning: </strong> <span style='color:red'>" + ((((initialHeuristicScore - d.data.score) / initialHeuristicScore) +  d.data.rewards) * 100).toFixed(2) + "% "+ "</span>" + "<br>" + "<br>" +
-                "<strong>Heuristic Score: </strong> <span style='color:red'>" + d.data.score + "</span>" + "<br>" +
+                "<strong>Heuristic Score: </strong> <span style='color:red'>" + d.data.heuristicScore + "</span>" + "<br>" +
+                "<strong>Game Score: </strong> <span style='color:red'>" + d.data.score + "</span>" + "<br>" +
+                "<strong>Edited Distance From Root: </strong> <span style='color:red'>" + d.data.editedDistanceFromRoot + "</span>" + "<br>" +
+
+
+                "<strong>Cluster: </strong> <span style='color:red'>" + d.data.cluster + "</span>" + "<br>" +
                 "<strong>Height: </strong> <span style='color:red'>" + d.data.height + "</span>" + "<br>" +
                 "<strong>Cost: </strong> <span style='color:red'>" + d.data.cost + "</span>" + "<br>" +
-                "<strong>Total Value: </strong> <span style='color:red'>" + d.data.totValue + "</span>" + "<br>" +
                 "<strong>Rewards: </strong> <span style='color:red'>" + d.data.rewards + "</span>" + "<br>" +
+
+                "<strong>Total Value JS: </strong> <span style='color:red'>" + d.data.totalValue_js + "</span>" + "<br>" +
+                "<strong>Number of Visits JS: </strong> <span style='color:red'>" + d.data.visit_js + "</span>" + "<br>" +
+
+                "<strong>Total Value: </strong> <span style='color:red'>" + d.data.totValue + "</span>" + "<br>" +
                 "<strong>Number of Visits: </strong> <span style='color:red'>" + d.data.nVisits + "</span>" + "<br>" ;
         });
 
@@ -426,11 +453,26 @@
 
     function treeDraw(currentJson) {
 
+
+
+        //Reset K-Mean Variables
+
+        clusteringDataSet = [];
+        clusterDict = {};
+
+        means = [];
+        assignments = [];
+        dataRange = null;
+
+        dataExtremes - null;
+
 // load the external data
         d3.json(currentJson, function(error, treeData) {
 
-            console.log(treeData);
+            console.log("treeData: ", treeData);
 
+
+            currentJsonFileName = treeData[0].rootNodeJSonFile;
 
 
             finalMaxTotalValue = treeData[0].finalMaxTotalValue;
@@ -440,14 +482,43 @@
             console.log(finalMaxTotalValue);
             console.log(initialHeuristicScore);
 
+            var rootLevelMapString = "";
+
+            treeData[0].levelMap.forEach(function(line) {
+
+
+                rootLevelMapString = rootLevelMapString + line;
+
+            })
+
+
+            console.log("rootLevelMapString:", rootLevelMapString);
+
+
 
             rowNum = treeData[0].stateMap.length;
             colNum = treeData[0].stateMap[0].length;
 
             rowColRatio = 1 + (  Math.min(rowNum, colNum)/  Math.max(rowNum, colNum));
 
-            console.log("rowNum :", rowNum);
-            console.log("colNum :", colNum);
+            ratio_Max =  Math.max(rowNum, colNum);
+            ratio_Min =  Math.min(rowNum, colNum);
+
+            var viewBoxWidth = 400; //* rowColRatio;
+            var viewBoxHeight = 400; //* rowColRatio;
+
+            if (( ratio_Max  / ratio_Min) > 2){
+
+                if (rowNum > colNum){
+
+                    viewBoxWidth = viewBoxWidth * 4;
+                }
+                else if (rowNum < colNum) {
+                    viewBoxHeight = viewBoxHeight * 4;
+                }
+            }
+
+
 
 
 
@@ -468,6 +539,7 @@
 
             // declares a tree layout and assigns the size
             var treemap = d3.tree().size([treeGraph_height, treeGraph_width]);
+            //var treemap = d3.cluster().size([treeGraph_height, treeGraph_width]);
 
             // Assigns parent, children, height, depth
             root = d3.hierarchy(treeData[0], function (d) {
@@ -477,19 +549,70 @@
             root.y0 = 0;
 
 
+
+            // Call Tool Tip
             svg.call(graph_tool_tip);
 
+
+//
+//            for (var dimension in clusteringDataSet)
+//            {
+//
+//                console.log(clusteringDataSet[dimension].heuristicScore);
+//
+//                ranges[dimension] = clusteringDataSet[dimension].max - clusteringDataSet[dimension].min;
+//            }
+
+
+
+
+
             // Collapse after the second level
-            //    root.children.forEach(collapse); // Commented out for not being collapsed by default
+            //root.children.forEach(collapse); // Commented out for not being collapsed by default
+
+            // Collapse after the second level
+            root.children.forEach(collapseIfNotFinal); // Commented out for not being collapsed by default
+
+
 
             update(root);
+
+
 
             // Collapse the node and all it's children
             function collapse(d) {
                 if (d.children) {
+
+                    console.log("d:  ", d);
+
                     d._children = d.children
                     d._children.forEach(collapse)
                     d.children = null
+                }
+            }
+
+
+
+
+            // Collapse the node and all it's children
+            function collapseIfNotFinal(d) {
+
+
+                if (d.children) {
+
+                    console.log("got here at collapseIfNotFinal ");
+                    console.log("d:  ", d);
+
+
+                     if ( d.data.isFinalPath === false){
+
+
+                         d._children = d.children
+                         d._children.forEach(collapse)
+                         d.children = null
+
+                     }
+
                 }
             }
 
@@ -500,7 +623,12 @@
 
 
 
+
+
             function update(source) {
+
+
+
 
                 // Assigns the x and y position for the nodes
                 var treeData = treemap(root);
@@ -512,7 +640,114 @@
                 // Normalize for fixed-depth.
                 nodes.forEach(function (d) {
                     d.y = d.depth * 180
+
+
+                    var thisMapString = "";
+
+                    d.data.levelMap.forEach(function(line) {
+
+
+                        thisMapString = thisMapString + line;
+
+                    })
+
+
+                    // Get Edit Distance
+                    var thisEditDistance = calculateLevDistance(rootLevelMapString,thisMapString);
+
+                    d.data.editedDistanceFromRoot = thisEditDistance;
+
+
+
+                    // Backup MTCS Like data flow up
+//                    console.log("d: ", d);
+
+                    var currentNode = d;
+
+                    while (currentNode.parent != null){
+
+
+                        currentNode.data.visit_js = currentNode.data.visit_js + 1;
+
+                        currentNode.data.totalValue_js = currentNode.data.totalValue_js +  d.data.totValue;
+
+                        currentNode = currentNode.parent;
+
+                        if (currentNode.parent == null){
+
+                            currentNode.data.visit_js = currentNode.data.visit_js + 1;
+                        }
+
+                    }
+
+
+                    // Prepare data for K-Means
+                    clusteringDataSet.push(d.data);
+                    clusterDict[d.data.name] = 0;
+
+
+
                 });
+
+
+
+
+                //TODO clustering on clusteringDataSet
+
+                console.log(clusteringDataSet);
+
+
+                dataExtremes = getDataExtremes(clusteringDataSet);
+
+                console.log("extremes: ", dataExtremes);
+
+
+                dataRange = getDataRanges(dataExtremes);
+
+
+                console.log("range: ", dataRange);
+
+
+                means = initMeans(3);
+
+                console.log("means: ", means);
+
+
+                makeAssignments();
+
+                setTimeout(runKMeans, drawDelay);
+
+//                console.log("runKMeans assignments: ", assignments);
+
+
+                for ( var i in clusteringDataSet){
+
+
+                    clusterDict[clusteringDataSet[i].name] = assignments[i];
+                }
+
+
+
+                nodes.forEach(function (d) {
+
+                    // TODO clustering assign cluster from clusterDict
+
+                    d.data.cluster = clusterDict[d.data.name];
+
+
+
+                });
+
+
+
+
+
+
+
+
+
+
+
 
                 // ****************** Nodes section ***************************
 
@@ -576,7 +811,7 @@
                 nodeEnter.append('text')
                     .attr("dy", ".35em")
                     .attr("x", function (d) {
-                        return d.children || d._children ? -13 : 13;
+                        return d.children || d._children ? -13 * rowColRatio : 13 * rowColRatio;
                     })
                     .attr("text-anchor", function (d) {
                         return d.children || d._children ? "end" : "start";
@@ -612,28 +847,38 @@
                 ////
                 var currentGridData = null;
 
+
+
+
                 var thisGrid = nodeEnter
                     .append("svg")
                     .attr("class", "grid_svg")
                     .attr("preserveAspectRatio", "xMinYMin meet")
-                    .attr("viewBox", "0 0 900 2000") // This should be in porpotion
+                    .attr("viewBox", "0 0 " + viewBoxWidth + " " + viewBoxHeight ) // This should be in porpotion
                     .attr("x", -10)
                     .attr("y", -10)
                     .attr("height", 30 * rowColRatio)
                     .attr("width", 30 * rowColRatio)
-                    .on( 'mouseenter', function() {
+                    .on( 'mouseenter', function(d) {
 
+
+                        highlight(d.data.cluster);
 
 
                         // select element in current context
                         d3.select( this )
                             .transition()
-                            .attr("height", 200 * rowColRatio)
-                            .attr("width", 200 * rowColRatio);
+                            .attr("height", 500 * rowColRatio)
+                            .attr("width", 500 * rowColRatio);
+
+
+
 
                     })
                     // set back
                     .on( 'mouseleave', function() {
+
+//                        unhighlight();
 
                         d3.select( this )
                             .transition()
@@ -692,6 +937,26 @@
 
 
 
+                var DOMURL = window.URL || window.webkitURL || window;
+
+                var svgString = domNodeToString(thisGrid.node());
+
+//                console.log("svgString: ", svgString);
+
+                var image = new Image();
+                var svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+                var url = DOMURL.createObjectURL(svgBlob);
+
+                image.onload = function() {
+                    context.drawImage(image, 0, 0);
+                    DOMURL.revokeObjectURL(url);
+                }
+
+                image.src = url;
+
+
+
+
                 // UPDATE
                 var nodeUpdate = nodeEnter.merge(node);
 
@@ -704,8 +969,17 @@
 
                 // Update the node attributes and style
                 nodeUpdate.select('circle.node')
-                    .attr('r', 10)
+                   // .data(color.domain())
+                    .attr('r', 15)
                     .style("fill", function (d) {
+
+                        //TODO IF cluster not = 0, change color
+                        if (d.data.cluster != null ){
+
+                            return  colorSet[d.data.cluster];
+                        }
+
+
                         return d._children ? "lightsteelblue" : "#fff";
                     })
                     .attr('cursor', 'pointer');
@@ -779,15 +1053,6 @@
 
 
 
-
-//                    .style('stroke-width', function (d) {
-//
-//
-//                        return 2 //widthScale(d.data.value)
-//
-//
-//                    });
-
                 // UPDATE
                 var linkUpdate = linkEnter.merge(link);
 
@@ -844,115 +1109,217 @@
 //                }
 
 
+
+                function fade(opacity) {
+                    return d => {
+                        node.style('stroke-opacity', function (o) {
+                            const thisOpacity = isConnected(d, o) ? 1 : opacity;
+                            this.setAttribute('fill-opacity', thisOpacity);
+                            return thisOpacity;
+                        });
+
+                        link.style('stroke-opacity', o => (o.source === d || o.target === d ? 1 : opacity));
+                        link.attr('marker-end', o => (opacity === 1 || o.source === d || o.target === d ? 'url(#end-arrow)' : 'url(#end-arrow-fade)'));
+                    };
+                }
+
+
+                function unhighlight() {
+                    d3.selectAll(".node").style("opacity", 1);
+                    d3.selectAll(".link").style("stroke-opacity", 1);
+                }
+
+                function highlight(clusterId) {
+                    // First unhighlight all the circles.
+                    unhighlight();
+
+                    // Find the circles that have an id
+                    // in the array of ids given, and
+                    // highlight those.
+                    d3.selectAll(".node").filter(function(d, i) {
+                        return d.data.cluster != clusterId;
+                    }).style("opacity", 0.2).style('stroke-opacity', 0.2);
+
+                    d3.selectAll(".link").filter(function(d, i) {
+                        return d.data.cluster != clusterId;
+                    }).style('stroke-opacity', 0.2);
+                }
+
+
                 // Toggle children on click.
                 function click(d) {
 
-//
-//
-//
-//
-//                    if (d.children) {
-//                        d._children = d.children;
-//                        d.children = null;
-//                    } else {
-//                        d.children = d._children;
-//                        d._children = null;
-//                    }
+
+
+
+
+                    if (d.children) {
+                        d._children = d.children;
+                        d.children = null;
+                    } else {
+                        d.children = d._children;
+                        d._children = null;
+                    }
 
                     console.log("Selected d:" , d.data.name);
 
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'http://localhost:8080/api/deleteGameLevelFile');
-                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-                    xhr.onreadystatechange = function() {//Call a function when the state changes.
-                        if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                            // Request finished. Do processing here.
-
-//                alert(xhr.responseText);
-
-
-                        }
-                    };
+                    console.log("currentJsonFileName: ", currentJsonFileName);
 
 
 
+                    var currentNode = d;
 
-                    var gameNameParts =  d.data.gameName.split("/");
-                    var gameName = gameNameParts.pop();
+                    var path = currentNode.data.name;
 
+                    var symbol = '>';
 
-
-                    var param = 'gameName=' + gameName;
-
-                    console.log("param: ", param);
-
-                    xhr.send(param);
+                    while (currentNode.parent != null){
 
 
+                        path =   symbol + path;
+                        var parentName = currentNode.parent.data.name;
+                        path =  parentName + path;
 
 
-                    for (i = 0; i < d.data.levelMap.length; i++) {
+                        currentNode = currentNode.parent;
+
+                    }
 
 
-                        console.log(d.data.levelMap[i]);
+                    console.log("path", path);
 
 
-//            characters =  encodeURIComponent(d.levelMap[i]);
+
+//                    var xhr = new XMLHttpRequest();
+//                    xhr.open('POST', 'http://localhost:8080/api/generateRerunMessage');
+//                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 //
-//            console.log("character: ", characters);
-
+//                    xhr.onreadystatechange = function() {//Call a function when the state changes.
+//                        if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+//                            // Request finished. Do processing here.
 //
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'http://localhost:8080/api/constructLevelMap');
-
-                        //Send the proper header information along with the request
-                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-                        xhr.onreadystatechange = function() {//Call a function when the state changes.
-                            if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                                // Request finished. Do processing here.
-
-                                alert(xhr.responseText);
-
-
-                            }
-                        };
-
-
-//            var thisMapObject =
-
-//            console.log(d.stateMap[i]);
-//            console.log("d.levelMap[d.stateMap[i]]: ", d.levelMap["wall"]);
-
-
-
-
-
-
-                        var params = 'row=' + d.data.levelMap[i]+ "&gameName=" + gameName;
-
-                        console.log("params: ", params);
-
-                        xhr.send(params);
-
-
-//                        for (j = 0; j < d.data.levelMap[i].length; j++){
-//
-//
+////                alert(xhr.responseText);
 //
 //
 //                        }
+//                    };
+//
+//
+//                    var params = 'fileName=' + currentJsonFileName + "&path=" + path;
+//
+//                    console.log("params: ", params);
+//
+//                    xhr.send(params);
+//
+//
+//
+//
+//                    var xhr = new XMLHttpRequest();
+//                    xhr.open('POST', 'http://localhost:8080/api/deleteGameLevelFile');
+//                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//
+//                    xhr.onreadystatechange = function() {//Call a function when the state changes.
+//                        if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+//                            // Request finished. Do processing here.
+//
+////                alert(xhr.responseText);
+//
+//
+//                        }
+//                    };
+//
+//
+//
+//
+//                    var gameNameParts =  d.data.gameName.split("/");
+//                    var gameName = gameNameParts.pop();
+//
+//
+//
+//                    var param = 'gameName=' + gameName;
+//
+//                    console.log("param: ", param);
+//
+//                    xhr.send(param);
+//
+//
+//
+//
+//                    for (i = 0; i < d.data.levelMap.length; i++) {
+//
+//
+//                        console.log(d.data.levelMap[i]);
+//
+//
+////            characters =  encodeURIComponent(d.levelMap[i]);
+////
+////            console.log("character: ", characters);
+//
+////
+//                        var xhr = new XMLHttpRequest();
+//                        xhr.open('POST', 'http://localhost:8080/api/constructLevelMap');
+//
+//                        //Send the proper header information along with the request
+//                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+//
+//                        xhr.onreadystatechange = function() {//Call a function when the state changes.
+//                            if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+//                                // Request finished. Do processing here.
+//
+//                                alert(xhr.responseText);
+//
+//
+//                            }
+//                        };
+//
+//
+//
+//                        var params = 'row=' + d.data.levelMap[i]+ "&gameName=" + gameName;
+//
+//                        console.log("params: ", params);
+//
+//                        xhr.send(params);
+//
+//
+//
+//
+//                    }
 
-                    }
+                    // End of httprequest
 
 
                     console.log(d.data.levelMap);
 
 
+//                    // Redraw tree with rerun data
+//                    setTimeout(function(){
+//
+//                        alert("Rerun completed!");
+//
+//                        if (treeIsDrew){
+//
+//
+//                            d3.selectAll(".svg_treeGraph").remove();
+//
+//                            treeDraw(currentJsonFile);
+//                        }
+//                        else {
+//
+//                            treeDraw(currentJsonFile);
+//
+//                            treeIsDrew = true;
+//                        }
+//
+//
+//
+//
+//
+//                    }, 3500);
 
-//        update(d);
+                    update(d);
+
                 }
+
 
             }
         })
@@ -1001,7 +1368,7 @@
             root.y0 = 0;
 
             // Collapse after the second level
-            //    root.children.forEach(collapse); // Commented out for not being collapsed by default
+            root.children.forEach(collapse); // Commented out for not being collapsed by default
 
             update(root);
 
@@ -1084,7 +1451,7 @@
                 nodeEnter.append('text')
                     .attr("dy", ".35em")
                     .attr("x", function (d) {
-                        return d.children || d._children ? -13 : 13;
+                        return d.children || d._children ? -28 : 28;
                     })
                     .attr("text-anchor", function (d) {
                         return d.children || d._children ? "end" : "start";
@@ -1232,6 +1599,250 @@
                 }
             }
         })
+
+
+
+
+    }
+
+</script>
+
+
+<script>
+
+    function calculateLevDistance(src, tgt) {
+        var realCost;
+
+        var srcLength = src.length,
+            tgtLength = tgt.length,
+            tempString, tempLength; // for swapping
+
+        var resultMatrix = new Array();
+        resultMatrix[0] = new Array(); // Multi dimensional
+
+        // To limit the space in minimum of source and target,
+        // we make sure that srcLength is greater than tgtLength
+        if (srcLength < tgtLength) {
+            tempString = src; src = tgt; tgt = tempString;
+            tempLength = srcLength; srcLength = tgtLength; tgtLength = tempLength;
+        }
+
+        for (var c = 0; c < tgtLength+1; c++) {
+            resultMatrix[0][c] = c;
+        }
+
+        for (var i = 1; i < srcLength+1; i++) {
+            resultMatrix[i] = new Array();
+            resultMatrix[i][0] = i;
+            for (var j = 1; j < tgtLength+1; j++) {
+                realCost = (src.charAt(i-1) == tgt.charAt(j-1))? 0: 1;
+                resultMatrix[i][j] = Math.min(
+                    resultMatrix[i-1][j]+1,
+                    resultMatrix[i][j-1]+1,
+                    resultMatrix[i-1][j-1] + realCost // same logic as our previous example.
+                );
+            }
+        }
+
+        return resultMatrix[srcLength][tgtLength];
+    }
+
+
+
+    function getDataExtremes(data) {
+
+        var extremes = [];
+
+        for (var i in data)
+        {
+            var point = data[i];
+
+            for (var dimension in point)
+            {
+                if ( ! extremes[dimension] )
+                {
+                    extremes[dimension] = {min: 1000, max: -10000000};
+                }
+
+                if (point[dimension] < extremes[dimension].min)
+                {
+                    extremes[dimension].min = point[dimension];
+                }
+
+                if (point[dimension] > extremes[dimension].max)
+                {
+                    extremes[dimension].max = point[dimension];
+                }
+            }
+        }
+
+        return extremes;
+    }
+
+    function getDataRanges(extremes) {
+        var ranges = [];
+
+        for (var dimension in extremes)
+        {
+            ranges[dimension] = extremes[dimension].max - extremes[dimension].min;
+        }
+
+        return ranges;
+
+    }
+
+
+    function initMeans(k) {
+
+        if ( ! k )
+        {
+            k = 3;
+        }
+
+        while (k--)
+        {
+            var mean = [];
+
+            for (var dimension in dataExtremes)
+            {
+                mean[dimension] = dataExtremes[dimension].min + ( Math.random() * dataRange[dimension] );
+            }
+
+            means.push(mean);
+        }
+
+        return means;
+
+    };
+
+
+
+    function makeAssignments() {
+
+
+
+        for (var i in clusteringDataSet)
+        {
+            var point = clusteringDataSet[i];
+            var distances = [];
+
+
+
+
+
+
+            for (var j in means)
+            {
+                var mean = means[j];
+                var sum = 0;
+
+                for (var dimension in point)
+                {
+                    var difference = point[dimension] - mean[dimension];
+
+                    if (isNaN(difference)){
+
+                        difference = 0;
+                    }
+
+                    difference *= difference;
+                    sum += difference;
+
+                }
+
+
+
+                distances[j] = Math.sqrt(sum);
+            }
+
+            assignments[i] = distances.indexOf( Math.min.apply(null, distances) );
+        }
+
+    }
+
+
+    function moveMeans() {
+
+        makeAssignments();
+
+        var sums = Array( means.length );
+        var counts = Array( means.length );
+        var moved = false;
+
+        for (var j in means)
+        {
+            counts[j] = 0;
+            sums[j] = Array( means[j].length );
+            for (var dimension in means[j])
+            {
+                sums[j][dimension] = 0;
+            }
+        }
+
+        for (var point_index in assignments)
+        {
+            var mean_index = assignments[point_index];
+            var point = clusteringDataSet[point_index];
+            var mean = means[mean_index];
+
+            counts[mean_index]++;
+
+            for (var dimension in mean)
+            {
+                sums[mean_index][dimension] += point[dimension];
+            }
+        }
+
+        for (var mean_index in sums)
+        {
+            console.log(counts[mean_index]);
+
+
+            if ( 0 === counts[mean_index] )
+            {
+                sums[mean_index] = means[mean_index];
+                console.log("Mean with no points");
+                console.log(sums[mean_index]);
+
+
+                for (var dimension in dataExtremes)
+                {
+                    sums[mean_index][dimension] = dataExtremes[dimension].min + ( Math.random() * dataRange[dimension] );
+                }
+                continue;
+            }
+
+            for (var dimension in sums[mean_index])
+            {
+                sums[mean_index][dimension] /= counts[mean_index];
+            }
+        }
+
+        if (means.toString() !== sums.toString())
+        {
+            moved = true;
+        }
+
+        means = sums;
+
+        return moved;
+
+    }
+
+    function runKMeans() {
+
+        var moved = moveMeans();
+
+
+        if (moved)
+        {
+
+
+
+            setTimeout(runKMeans, drawDelay);
+        }
+
+
 
     }
 

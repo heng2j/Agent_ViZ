@@ -1,0 +1,177 @@
+body{
+    margin: 0;
+    font-family: arial, sans;
+}
+
+.label{
+    font-size: 15px;
+}
+
+.legend text,
+.axis text {
+    font-size: 13px;
+    fill: #333;
+}
+
+.axis path,
+.axis line{
+    fill: none;
+    stroke-width: 1px;
+    stroke: #777;
+}
+
+.circle{
+    fill-opacity: 0.65;
+}
+
+.bubble{
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.bubble:hover text{
+    opacity: 1;
+}
+
+.bubble:hover circle{
+    fill-opacity: 1;
+}
+
+.legend rect{
+    fill-opacity: 0.75;
+}
+
+.legeng:hover rect{
+    fill-opacity:1;
+}
+
+
+
+.svg_chart_d3-tip {
+    line-height: 1;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.svg_chart_d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+/* Style northward tooltips specifically */
+.svg_chart_d3-tip.n:after {
+    margin: -2px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+
+
+
+
+
+.svg_graph_d3-tip {
+    line-height: 1;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.svg_graph_d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+/* Style northward tooltips specifically */
+.svg_graph_d3-tip.n:after {
+    margin: -2px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+
+
+
+
+
+
+
+.node circle {
+    fill: #999;
+    stroke: #37b4d2;
+    stroke-width: 0px;
+}
+
+.node text {
+    font: 10px sans-serif;
+}
+
+.node--internal circle {
+    fill: #555;
+}
+
+.node--internal text {
+    text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+}
+
+.link {
+    fill: none;
+    stroke: #555;
+    stroke-opacity: 1;
+    stroke-width: 1.5px;
+}
+
+
+
+.slideComponent{
+
+    position: absolute;
+    left: 100px;
+    top: 150px;
+}
+
+
+/* Style for loader specifically */
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    z-index: 15;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -150px;
+    animation: spin 2s linear infinite;
+}
+
+/* Style for loader specifically */
+.loader.hidden {
+    visibility: hidden;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+

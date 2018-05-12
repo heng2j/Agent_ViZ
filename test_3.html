@@ -4,183 +4,6 @@
     <meta charset="UTF-8">
     <title>Scatterplot d3v4</title>
     <style type="text/css">
-        body{
-            margin: 0;
-            font-family: arial, sans;
-        }
-
-        .label{
-            font-size: 15px;
-        }
-
-        .legend text,
-        .axis text {
-            font-size: 13px;
-            fill: #333;
-        }
-
-        .axis path,
-        .axis line{
-            fill: none;
-            stroke-width: 1px;
-            stroke: #777;
-        }
-
-        .circle{
-            fill-opacity: 0.65;
-        }
-
-        .bubble{
-            opacity: 1;
-            transition: opacity 0.3s;
-        }
-
-        .bubble:hover text{
-            opacity: 1;
-        }
-
-        .bubble:hover circle{
-            fill-opacity: 1;
-        }
-
-        .legend rect{
-            fill-opacity: 0.75;
-        }
-
-        .legeng:hover rect{
-            fill-opacity:1;
-        }
-
-
-
-        .svg_chart_d3-tip {
-            line-height: 1;
-            padding: 6px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        /* Creates a small triangle extender for the tooltip */
-        .svg_chart_d3-tip:after {
-            box-sizing: border-box;
-            display: inline;
-            font-size: 10px;
-            width: 100%;
-            line-height: 1;
-            color: rgba(0, 0, 0, 0.8);
-            content: "\25BC";
-            position: absolute;
-            text-align: center;
-        }
-
-        /* Style northward tooltips specifically */
-        .svg_chart_d3-tip.n:after {
-            margin: -2px 0 0 0;
-            top: 100%;
-            left: 0;
-        }
-
-
-
-
-
-        .svg_graph_d3-tip {
-            line-height: 1;
-            padding: 6px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        /* Creates a small triangle extender for the tooltip */
-        .svg_graph_d3-tip:after {
-            box-sizing: border-box;
-            display: inline;
-            font-size: 10px;
-            width: 100%;
-            line-height: 1;
-            color: rgba(0, 0, 0, 0.8);
-            content: "\25BC";
-            position: absolute;
-            text-align: center;
-        }
-
-        /* Style northward tooltips specifically */
-        .svg_graph_d3-tip.n:after {
-            margin: -2px 0 0 0;
-            top: 100%;
-            left: 0;
-        }
-
-
-
-
-
-
-
-        .node circle {
-            fill: #999;
-            stroke: #37b4d2;
-            stroke-width: 0px;
-        }
-
-        .node text {
-            font: 10px sans-serif;
-        }
-
-        .node--internal circle {
-            fill: #555;
-        }
-
-        .node--internal text {
-            text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
-        }
-
-        .link {
-            fill: none;
-            stroke: #555;
-            stroke-opacity: 1;
-            stroke-width: 1.5px;
-        }
-
-
-
-        .slideComponent{
-
-            position: absolute;
-            left: 100px;
-            top: 150px;
-        }
-
-
-        /* Style for loader specifically */
-        .loader {
-            border: 16px solid #f3f3f3; /* Light grey */
-            border-top: 16px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            position: absolute;
-            z-index: 15;
-            top: 50%;
-            left: 50%;
-            margin: -100px 0 0 -150px;
-            animation: spin 2s linear infinite;
-        }
-
-        /* Style for loader specifically */
-        .loader.hidden {
-            visibility: hidden;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
 
 
     </style>
@@ -198,6 +21,8 @@
 
 
     <link rel="stylesheet" type="text/css" href="http://localhost:8080/css/d3-context-menu.css">
+
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/css/app.css">
 
 </head>
 <body>
@@ -227,6 +52,13 @@
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+
+        svg_chart.append("rect")
+            .attr('class', 'svg_chart_BG')
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("fill", "white");
 
 
     // The API for scales have changed in v4. There is a separate module d3-scale which can be used instead. The main change here is instead of d3.scale.linear, we have d3.scaleLinear.
@@ -263,55 +95,19 @@
     loader.style.display = "none";
 
 
-    // For contextmenu
-    var Graph_menu = [
-        {
-            title: 'Extend tree from this state',
-            action: function(elm, d, i) {
-                console.log('Item #1 clicked!');
-                console.log('The data for this circle is: ' + d);
-            }
-        },
-        {
-            title: 'Send this state to Cicero to Rerun',
-            action: function(elm, d, i) {
-                console.log('You have clicked the second item!');
-                console.log('The data for this circle is: ' + d);
-            }
-        }
-    ]
-
-
-    var Graph_BG_menu = [
-        {
-            title: 'Expand all tree nodes',
-            action: function(elm, d, i) {
-                console.log('Item #1 clicked!');
-                console.log('The data for this circle is: ' + d);
-            }
-        },
-        {
-            title: 'Send this state to Cicero to Rerun',
-            action: function(elm, d, i) {
-                console.log('You have clicked the second item!');
-                console.log('The data for this circle is: ' + d);
-            }
-        }
-    ]
 
     var menu = [
         {
-            title: 'Extend tree from this state',
+            title: 'Download the run dataset',
             action: function(elm, d, i) {
-                console.log('Item #1 clicked!');
-                console.log('The data for this circle is: ' + d);
-            }
-        },
-        {
-            title: 'Send this state to Cicero to Rerun',
-            action: function(elm, d, i) {
-                console.log('You have clicked the second item!');
-                console.log('The data for this circle is: ' + d);
+                
+
+                var url = 'http://localhost:8080/api/AgentVizData.zip';
+
+                window.open(url, '_blank');
+
+
+
             }
         }
     ]
@@ -376,6 +172,9 @@
             .attr('transform', 'translate(0,0)')
             .attr('class', 'y axis')
             .call(yAxis);
+
+
+        var chartBackground = d3.select('.svg_chart_BG').on('contextmenu', d3.contextMenu(menu));
 
 
         var bubble = svg_chart.selectAll('.bubble')
@@ -620,6 +419,97 @@
 
 
 
+            // For contextmenu
+            var Graph_menu = [
+                {
+                    title: 'Extend tree from this state',
+                    action: function(elm, d, i) {
+
+
+
+                        resetRerunFile(d);
+
+                        resetRerunMessage(d);
+
+
+                        loader.style.left = d.x;
+                        loader.style.top = d.y + 1000;
+
+                        loader.style.display = "block";
+
+
+
+                        // Redraw tree with rerun data
+                        setTimeout(function(){
+
+                            //  alert("Rerun completed!");
+
+                            loader.style.display = "none";
+
+                            if (treeIsDrew){
+
+
+                                d3.selectAll(".svg_treeGraph").remove();
+
+                                treeDraw(currentJsonFile);
+                            }
+                            else {
+
+                                treeDraw(currentJsonFile);
+
+                                treeIsDrew = true;
+                            }
+
+
+                        }, 3500);
+
+
+
+                    }
+                },
+                {
+                    title: 'Send this state to Cicero for rerun',
+                    action: function(elm, d, i) {
+
+                        resetRerunFile(d);
+
+                    }
+                }
+            ]
+
+
+            var Graph_BG_menu = [
+                {
+                    title: 'Expand all tree nodes',
+                    action: function(elm, d, i) {
+
+                        root.children.forEach(expand);
+                        update(root);
+
+                    }
+                },
+                {
+                    title: 'Re-Focus on critical path',
+                    action: function(elm, d, i) {
+
+                        root.children.forEach(collapseIfNotFinal);
+                        update(root);
+
+                    }
+                },
+                {
+                    //TODO To be done
+                    title: 'Auto clustering',
+                    action: function(elm, d, i) {
+                        console.log('You have clicked the second item!');
+                        console.log('The data for this circle is: ' + d);
+                    }
+                }
+
+            ]
+
+
+
             // append the svg object to the body of the page
             // appends a 'group' element to 'svg'
             // moves the 'group' element to the top left margin
@@ -659,6 +549,111 @@
             svg.call(graph_tool_tip);
 
 
+
+            function resetRerunMessage(d){
+
+
+                //Prepareing path to send back to Cicero
+                var currentNode = d;
+
+                var path = currentNode.data.name;
+
+                var symbol = '>';
+
+                while (currentNode.parent != null){
+
+
+                    path =   symbol + path;
+                    var parentName = currentNode.parent.data.name;
+                    path =  parentName + path;
+
+
+                    currentNode = currentNode.parent;
+
+                }
+
+                console.log("path", path);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://localhost:8080/api/generateRerunMessage');
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function() {//Call a function when the state changes.
+                    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                        // Request finished. Do processing here.
+
+//                alert(xhr.responseText);
+
+
+                    }
+                };
+
+
+                var params = 'fileName=' + currentJsonFileName + "&path=" + path;
+
+                console.log("params: ", params);
+
+                xhr.send(params);
+
+            }
+
+
+            function resetRerunFile(d){
+
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'http://localhost:8080/api/deleteGameLevelFile');
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.onreadystatechange = function() {//Call a function when the state changes.
+                    if(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                        // Request finished. Do processing here.
+                        var levelMap = '';
+
+                        for (i = 0; i < d.data.levelMap.length; i++) {
+                            console.log(d.data.levelMap[i]);
+
+                            if (levelMap != ''){
+
+                                levelMap = levelMap + "," +d.data.levelMap[i];
+                            }
+                            else{
+
+                                levelMap = levelMap +d.data.levelMap[i]
+                            }
+
+                        }
+
+                        var innerXhr = new XMLHttpRequest();
+                        innerXhr.open('POST', 'http://localhost:8080/api/constructLevelMap');
+
+                        //Send the proper header information along with the request
+                        innerXhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                        innerXhr.onreadystatechange = function() {//Call a function when the state changes.
+                            if(innerXhr.readyState == XMLHttpRequest.DONE && innerXhr.status == 200) {
+                                // Request finished. Do processing here.
+                            }
+                        };
+
+                        var params = 'levelMap=' + levelMap + "&gameName=" + gameName;
+                        innerXhr.send(params);
+
+                    }
+                };
+
+
+                var gameNameParts =  d.data.gameName.split("/");
+                var gameName = gameNameParts.pop();
+
+                var param = 'gameName=' + gameName;
+
+
+                xhr.send(param);
+
+            }
+
+
 //
 //            for (var dimension in clusteringDataSet)
 //            {
@@ -676,7 +671,7 @@
             //root.children.forEach(collapse); // Commented out for not being collapsed by default
 
             // Collapse after the second level
-            //root.children.forEach(collapseIfNotFinal); // Commented out for not being collapsed by default
+            root.children.forEach(collapseIfNotFinal); // Commented out for not being collapsed by default
 
 
 
@@ -687,14 +682,26 @@
             // Collapse the node and all it's children
             function collapse(d) {
                 if (d.children) {
-
-                    console.log("d:  ", d);
-
                     d._children = d.children
                     d._children.forEach(collapse)
                     d.children = null
                 }
             }
+
+
+            // Collapse the node and all it's children
+            function expand(d) {
+                if (d._children) {
+                    d.children = d._children
+                    d.children.forEach(expand)
+                    d._children = null
+                }
+                else if (d.children) {
+                    d.children.forEach(expand)
+                }
+            }
+
+
 
 
 
@@ -705,7 +712,7 @@
 
                 if (d.children) {
 
-                     if ( d.data.isFinalPath === false){
+                     if ( d.data.isFinalPath === false ){
 
 
 //                         d._children = d.children
@@ -761,7 +768,7 @@
 
                                                 console.log("Click background");
                                                 unhighlight()
-                                            });
+                                            }).on('contextmenu', d3.contextMenu(Graph_BG_menu));
 
 
 
@@ -906,8 +913,7 @@
                         return "translate(" + source.y0 + "," + source.x0 + ")";
                     })
                     .on('click', click)
-                    .on('dblclick',doubleClick)
-                    .on('contextmenu', d3.contextMenu(menu))
+//                    .on('dblclick',doubleClick)
                     .on('mouseover', graph_tool_tip.show)
                     .on('mouseout', graph_tool_tip.hide);
 
@@ -936,7 +942,7 @@
                     .attr('class', 'nodeText')
                     .attr("dy", ".35em")
                     .attr("x", function (d) {
-                        return d.children || d._children ? -13 * rowColRatio : 13 * rowColRatio;
+                        return d.children || d._children ? -20 * rowColRatio : 20 * rowColRatio;
                     })
                     .attr("text-anchor", function (d) {
                         return d.children || d._children ? "end" : "start";
@@ -985,6 +991,7 @@
                     .attr("y", -10)
                     .attr("height", 30 * rowColRatio)
                     .attr("width", 30 * rowColRatio)
+                    .on('contextmenu', d3.contextMenu(Graph_menu))
                     .on( 'mouseenter', function(d) {
 
 
@@ -1097,9 +1104,6 @@
 
                             console.log("Updated currentSelectedNode: ", currentSelectedNode);
                             currentSelectedNode = d;
-
-
-
 
                         };
 

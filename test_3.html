@@ -63,7 +63,7 @@
 
     // The API for scales have changed in v4. There is a separate module d3-scale which can be used instead. The main change here is instead of d3.scale.linear, we have d3.scaleLinear.
     var xScale = d3.scaleLinear()
-        .range([width, 0]);
+        .range([0,width]);
 
     var yScale = d3.scaleLinear()
         .range([height, 0]);
@@ -100,7 +100,7 @@
         {
             title: 'Download the run dataset',
             action: function(elm, d, i) {
-                
+
 
                 var url = 'http://localhost:8080/api/AgentVizData.zip';
 
@@ -119,16 +119,16 @@
         .attr('class', 'svg_chart_d3-tip')
         .offset([-10, 0])
         .html(function(d) {
-            return "<strong>Persona Type: </strong> <span style='color:red'>" + d.personaType + "</span>" + "<br>" + "<br>" +
+            return "<strong>Major Event Type: </strong> <span style='color:red'>" + d.personaType + "</span>" + "<br>" + "<br>" +
 
                 "<strong>TreeNode File Name: </strong> <span style='color:red'>" + d.TreeNodeFileName + "</span>" + "<br>" +
 
                 "<strong>Number of Winnings: </strong> <span style='color:red'>" + d.gotGoalNum + "</span>" + "<br>" +
                 "<strong>Number of Losses: </strong> <span style='color:red'>" + d.gotKilledNum + "</span>" + "<br>" +
 
-                "<strong>Enemy Killed: </strong> <span style='color:red'>" + d.killedEnemyNum + "</span>" + "<br>" +
-
-                "<strong>Resrouces Obtained: </strong> <span style='color:red'>" + d.gotResourceNum + "</span>" + "<br>" +
+//                "<strong>Enemy Killed: </strong> <span style='color:red'>" + d.killedEnemyNum + "</span>" + "<br>" +
+//
+//                "<strong>Resrouces Obtained: </strong> <span style='color:red'>" + d.gotResourceNum + "</span>" + "<br>" +
 
                 "<strong>Total Avatar Events: </strong> <span style='color:red'>" + d.totalAvatarEvents + "</span>" + "<br>";
         });
@@ -183,7 +183,7 @@
             .attr('class', 'bubble')
             .attr('cx', function(d){return xScale(d.elapsedTime);})
             .attr('cy', function(d){ return yScale(d.numNodesVisited); })
-            .attr('r', function(d){ return radius(d.height); })
+            .attr('r', 5) //function(d){ return radius(d.numNodesVisited); }
             .style('fill', function(d){ return color(d.personaType); })
             .on('mouseover', chart_tool_tip.show)
             .on('mouseout', chart_tool_tip.hide)
@@ -243,12 +243,12 @@
             .data(color.domain())
             .enter().append('g')
             .attr('class', 'legend')
-            .attr('transform', function(d,i){ return 'translate(0,' + i * 20 + ')'; });
+            .attr('transform', function(d,i){ return 'translate(0,' + i * 50 + ')'; });
 
         // give x value equal to the legend elements.
         // no need to define a function for fill, this is automatically fill by color.
         legend.append('rect')
-            .attr('x', width - 60)
+            .attr('x', width - 10)
             .attr('width', 18)
             .attr('height', 18)
             .style('fill', color);
@@ -256,7 +256,7 @@
         // add text to the legend elements.
         // rects are defined at x value equal to width, we define text at width - 6, this will print name of the legends before the rects.
         legend.append('text')
-            .attr('x', width - 70)
+            .attr('x', width - 15)
             .attr('y', 9)
             .attr('dy', '.35em')
             .style('text-anchor', 'end')
